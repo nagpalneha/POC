@@ -1,0 +1,79 @@
+import static java.lang.String.format
+
+import org.apache.tools.ant.filters.*
+
+
+repositories {
+	mavenCentral()
+
+	ivy {
+		url "http://ivy.reallysi.com/ivy-repo/"
+		layout "pattern", { artifact "[organisation]/[module]/[artifact]-[revision].[ext]" }
+	}
+
+	maven {
+		url "http://nexus.theiet.org/nexus/content/groups/public"
+	}
+
+	maven { url "http://developer.marklogic.com/maven2" }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply from: 'groovy.gradle'
+
+
+project.version = "0.0.1"
+
+configurations {
+	all
+
+	pluginJars{ transitive = false }
+
+	testCompile { transitive = false }
+}
+
+dependencies {
+	compile 'rsi:rsuite-api:4.1.14'
+	compile group: "rsi", name: "rsuite-project-helper", version: "1.1.10-SNAPSHOT", changing: true
+	compile 'apache:commons-logging:1.1'
+	compile 'commons-io:commons-io:1.4'
+
+	pluginJars group: "rsi", name: "rsuite-project-helper", version: "1.1.10-SNAPSHOT", changing: true
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+processResources.outputs.upToDateWhen{ false }
+
+processResources {
+	from('src/main/resources') {
+		filter(ReplaceTokens, tokens: [version : project.version.toString() + "_" + new Date()])
+	}
+}
+
+jar {
+	version = null
+	from('src/main') { include 'WebContent/**/*' }
+
+	from {
+		configurations.pluginJars.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+}
+
+task wrapper(type: Wrapper) { gradleVersion = '2.5' }
+
+
+
+task buildPluginPackage(dependsOn: ['jar'], type: Zip) {
+
+	from('setup') {
+		include '**/*'
+		into('setup')
+	}
+
+	from(configurations.runtime.allArtifacts.files) { into('plugin') }
+
+	from('.') { include('deploy.gradle') }
+}

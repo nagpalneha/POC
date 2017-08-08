@@ -1,0 +1,5 @@
+rsuite.home=/usr/local/rsuite/prog/iet_inspec
+rsuite.server.host=localhost
+rsuite.server.port=8080
+rsuite.userName=admin
+rsuite.password=admin

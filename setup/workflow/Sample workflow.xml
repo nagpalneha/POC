@@ -1,0 +1,70 @@
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="Sample workflow">
+  <start-state name="StartNode">
+    <transition name="" to="Parse file name" />
+  </start-state>
+  <node name="Parse file name">
+    <action class="com.reallysi.service.workflow.ingestion.action.FileParseActionHandler">
+      <regex>(.*)\.([a-zA-Z]+)$</regex>
+      <parameters>filename;id;ext</parameters>
+      <useGlobalContext>true</useGlobalContext>
+    </action>
+    <transition name="" to="Ingestion file check" />
+  </node>
+  
+  <decision name="Ingestion file check">
+  
+  <transition to="Ingest PDF" name="Ingest PDF"/>
+  
+    <transition name="Review Invalid Extension" to="Review Invalid Extension">
+      <condition>#{ext != 'pdf'}</condition>
+    </transition>
+    
+    
+    
+  </decision>
+  
+  <task-node name="Review Invalid Extension">
+    <task name="Review Invalid Extension" description="Review Invalid Extension">
+      <event type="task-create">
+        <action class="org.theiet.rsuite.journals.actionhandlers.AssignTaskToEa" />
+      </event>
+      <assignment pooled-actors="InspecAuthorizedUser" />
+      <controller class="com.reallysi.rsuite.system.workflow.RSuiteJbpmTaskControllerDelegation">
+        <variable name="rsuite contents" access="read,write,required" />
+      </controller>
+    </task>
+    <transition to="EndNode"></transition>
+  </task-node>
+  
+  <decision name="Ingest PDF">
+    <event type="node-enter">
+      <action class="org.iet.sample.plugin.demo.actionhandler.LoadPdfActionHandler" />
+    </event>
+    
+    <transition to="EndNode" name="EndNode" />
+    <transition to="Review Load Fail" name="Review Load Fail">
+      <condition>#{EXCEPTION_OCCUR == 'true'}</condition>
+      <action class="org.theiet.rsuite.actionhandlers.ClearExcpetionAbstractActionHandler" />
+    </transition>
+  </decision>
+ 
+  
+  <task-node name="Review Load Fail">
+    <task name="Review Load Fail" description="Review fail">
+      <event type="task-create">
+        <action class="org.theiet.rsuite.journals.actionhandlers.AssignTaskToEa" />
+      </event>
+      <assignment pooled-actors="InspecAuthorizedUser" />
+      <controller class="com.reallysi.rsuite.system.workflow.RSuiteJbpmTaskControllerDelegation">
+        <variable name="rsuite contents" access="read,write,required" />
+      </controller>
+    </task>
+    <transition to="EndNode"></transition>
+  </task-node>
+  
+  <end-state name="EndNode">
+    <event type="node-enter">
+      <action class="com.rsicms.projectshelper.workflow.actionhandlers.WorkflowCleanUpActionHandler" />
+    </event>
+  </end-state>
+</process-definition>

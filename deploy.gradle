@@ -1,0 +1,24 @@
+buildscript {
+	repositories {
+		ivy {
+			url "http://ivy.reallysi.com/ivy-repo/"
+			layout "pattern", { artifact "[organisation]/[module]/[artifact]-[revision].[ext]" }
+		}
+	}
+	dependencies { classpath 'rsi:rsuite-projects-deploy-gradle-plugin:0.0.8' }
+}
+
+apply plugin: 'com.rsicms.rsuite.projects.deploy'
+
+dependencies {
+	rsuiteGroovy 'rsi:rsuite-admin-client-extension:0.1.2'
+}
+
+rsuiteDeployment{
+
+	rsuiteGroovy{
+		common 'DeployWorkflows.groovy'
+	}
+}
+
+

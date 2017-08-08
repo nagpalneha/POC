@@ -1,0 +1,88 @@
+<rsuite-plugin id="sample_rsuite_plugin" version="@version@">
+
+  <extensionProvider id="rsuite.WebService">
+    <staticWebService root="/sample_rsuite_plugin" path="/WebContent" />
+
+    <remoteApiDefinition id="org.iet.sample.plugin.ws1"
+      handler="org.iet.sample.plugin.demo.webservice.SampleWebService" description="Sample WS" />
+
+  </extensionProvider>
+  <extensionProvider id="rsuite.ContextMenu">
+
+    <contextMenuRuleSet name="org.iet.sample.plugin.menu1">
+      <menuItemList>
+        <menuItem>
+          <type>action</type>
+          <actionName>rsuite:invokeWebservice</actionName>
+          <label>Sample plugin: Get mo info</label>
+          <property name="formId" value="org.iet.sample.plugin.form1" />
+          <property name="remoteApiName" value="org.iet.sample.plugin.ws1" />
+          <property name="showProgressMeter" value="true" />
+        </menuItem>
+      </menuItemList>
+      <ruleList>
+        <!-- rule>include caType inspec_delivery_services </rule> <rule>include role InspecAuthorizedUser,RSuiteAdministrator</rule -->
+      </ruleList>
+    </contextMenuRuleSet>
+
+
+
+
+  </extensionProvider>
+  <extensionProvider id="rsuite.Forms">
+    <!-- datatypeDefinition name="boolean" label="boolean" formControlType="select" baseType="string" 
+      description=""> <optionListProvider handler="org.iet.inspec.rsuite.datatypeprovider.BooleanTypeProvider" 
+      /> </datatypeDefinition> <datatypeDefinition name="formatList" label="formatList" formControlType="select" 
+      baseType="string" description=""> <optionListProvider handler="org.iet.inspec.rsuite.delivery.format.datatypeprovider.FormatTypeProvider" 
+      /> </datatypeDefinition -->
+    <formDefinition id="org.iet.sample.plugin.form1" label="Sample form" description="Sample form">
+      <instructions>Please provide some data.
+      </instructions>
+      <paramList>
+        <param>
+          <col>1</col>
+          <name>mo_id</name>
+          <label>Managed object id:</label>
+          <formControlType>text</formControlType>
+          <validation required="true" errorMessage="This input field is 
+      required." />
+        </param>
+
+        <!-- param> <col>2</col> <name>lmd_inspec_service_store_inspec_record_version</name> <label>Store 
+          Inspec Record Version: </label> <formControlType>select</formControlType> <datatype name="boolean" /> 
+          </param -->
+      </paramList>
+    </formDefinition>
+
+
+  </extensionProvider>
+  <extensionProvider id="rsuite.Workflow">
+    <!--  actionHandler
+      type="com.rsicms.projectshelper.publish.workflow.actionhandlers.ClearExcpetionAbstractActionHandler"
+      description="Clear exception" />
+    <actionHandler type="com.rsicms.projectshelper.workflow.actionhandlers.WorkflowCleanUpActionHandler"
+      description="Clear workflow data" / -->
+    <actionHandler
+      type="org.iet.sample.plugin.demo.actionhandler.LoadPdfActionHandler"
+      description="Load pdf" />
+
+  </extensionProvider>
+  <extensionProvider id="rsuite.TransformationProvider">
+  </extensionProvider>
+  <extensionProvider id="rsuite.UI">
+
+
+    <!--  contentDisplayAdvisor id="iet.inspec.contentDisplayAdvisor"
+      type="org.iet.inspec.rsuite.plugin.advisor.display.IetInspecContentDisplayAdvisor" / -->  
+  </extensionProvider>
+  <extensionProvider id="rsuite.Search">
+  </extensionProvider>
+  <extensionProvider id="rsuite.Reporting">
+  </extensionProvider>
+  <extensionProvider id="rsuite.EventBus">
+  </extensionProvider>
+  <!-- extensionProvider id="rsuite.ManagedObjectAdvisor"> <managedObjectAdvisor type="org.iet.inspec.rsuite.plugin.advisor.AliasSettingManagedObjectAdvisor" 
+    /> </extensionProvider -->
+  <extensionProvider id="rsuite.Scheduler">
+  </extensionProvider>
+</rsuite-plugin>
